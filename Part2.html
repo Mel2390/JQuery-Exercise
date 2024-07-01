@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Movies App</title>
+  <link rel="stylesheet"
+        href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<div class="container">
+  <h1 class="text-center">Movies App</h1>
+  <form id="movie-form">
+    <div class="form-group">
+      <label for="title">Movie Title</label>
+      <input type="text" id="title" class="form-control" required minlength="2">
+    </div>
+    <div class="form-group">
+      <label for="rating">Movie Rating</label>
+      <input type="number" id="rating" class="form-control" required min="0" max="10">
+    </div>
+    <button type="submit" class="btn btn-primary">Add Movie</button>
+  </form>
+  <div class="mt-4">
+    <button id="sort-title" class="btn btn-secondary">Sort by Title</button>
+    <button id="sort-rating" class="btn btn-secondary">Sort by Rating</button>
+  </div>
+  <ul id="movie-list" class="mt-4 list-group"></ul>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#movie-form').on('submit', function(event) {
+      event.preventDefault();
+      const title = $('#title').val();
+      const rating = $('#rating').val();
+      $('#movie-list').append(`
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          ${title} - ${rating}
+          <button class="btn btn-danger btn-sm remove-btn">Remove</button>
+        </li>
+      `);
+      $('#title').val('');
+      $('#rating').val('');
+    });
+
+    $('#movie-list').on('click', '.remove-btn', function() {
+      $(this).parent().remove();
+    });
+
+    $('#sort-title').on('click', function() {
+      sortMovies('title');
+    });
+
+    $('#sort-rating').on('click', function() {
+      sortMovies('rating');
+    });
+
+    function sortMovies(criteria) {
+      const movies = $('#movie-list li').get();
+      movies.sort(function(a, b) {
+        if (criteria === 'title') {
+          return $(a).text().localeCompare($(b).text());
+        } else if (criteria === 'rating') {
+          return parseFloat($(a).text().split(' - ')[1]) - parseFloat($(b).text().split(' - ')[1]);
+        }
+      });
+      $('#movie-list').empty().append(movies);
+    }
+  });
+</script>
+</body>
+</html>
